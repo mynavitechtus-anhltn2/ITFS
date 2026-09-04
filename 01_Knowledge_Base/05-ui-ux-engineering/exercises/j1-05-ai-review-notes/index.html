@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Review · bài làm</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: system-ui, sans-serif;
+        background: #f6f4ef;
+        color: #1c1917;
+      }
+      .banner {
+        margin: 1rem;
+        padding: 0.75rem 1rem;
+        background: #ffedd5;
+        color: #9a3412;
+        border-radius: 8px;
+        font-size: 0.9rem;
+      }
+      .card {
+        max-width: 420px;
+        margin: 1rem auto 2rem;
+        padding: 1.5rem;
+        background: #fffdf8;
+        border: 1px solid #e7e5e4;
+        border-radius: 12px;
+      }
+      .hero {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 0.75rem;
+      }
+      .title {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      .meta {
+        margin: 0.15rem 0 0;
+        color: #57534e;
+        font-size: 0.875rem;
+      }
+      .avatar {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: #0f766e;
+        flex-shrink: 0;
+      }
+      .field {
+        margin: 0.75rem 0;
+      }
+      .field label {
+        display: block;
+        font-size: 0.875rem;
+        margin-bottom: 0.25rem;
+      }
+      .field input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0.4rem;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+      }
+      .btn {
+        display: inline-block;
+        margin: 0;
+        padding: 0.45rem 0.85rem;
+        background: #0f766e;
+        color: #fff;
+        border: 0;
+        border-radius: 8px;
+        font: inherit;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      .btn.ghost {
+        background: #fff;
+        color: #1c1917;
+        border: 1px solid #e7e5e4;
+      }
+      .badge {
+        margin-top: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      BÀI LÀM — sửa semantics/a11y.
+      Lỗi đã bắt (≥3):
+      1. Tag: “Chỉnh sửa” là div.btn + onclick — giả nút, không vào Tab, không có type.
+      2. Tag: “Về Portal” là div điều hướng — phải là <a href>, không phải onclick trên div.
+      3. Label: input Email / Headline không có <label for> (placeholder không thay label).
+      4. Alt: ảnh Badge thiếu thuộc tính alt; avatar là div trống, không truyền được tên.
+      5. Heading: tên “Minh Anh” là span.title — không có h1, landmark main thiếu.
+      Prompt bạn sẽ dùng lần sau (optional):
+      > Semantic HTML. Native <button type="button"> for actions, <a href> for navigation.
+      > Every input needs <label for>. Informative images need alt. No div onClick as a control.
+      Reset: cp before.html index.html
+    -->
+    <div class="banner">
+      <strong>index.html</strong> — bài làm: ghi ≥3 lỗi ở comment trên, rồi sửa
+      markup. So với <code>before.html</code>.
+    </div>
+
+    <main>
+      <article class="card">
+        <header class="hero">
+          <img
+            class="avatar"
+            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Crect fill='%230f766e' width='72' height='72'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' fill='white' font-size='28' font-family='sans-serif'%3EMA%3C/text%3E%3C/svg%3E"
+            width="72"
+            height="72"
+            alt="Ảnh đại diện của Minh Anh"
+          />
+          <div>
+            <h1 class="title">Minh Anh</h1>
+            <p class="meta">Frontend Intern · Line Alpha</p>
+          </div>
+        </header>
+
+        <div class="field">
+          <label for="contact-email">Email liên hệ</label>
+          <input
+            id="contact-email"
+            type="email"
+            placeholder="you@company.com"
+          />
+        </div>
+        <div class="field">
+          <label for="headline">Headline</label>
+          <input
+            id="headline"
+            type="text"
+            placeholder="Frontend Intern · Line Alpha"
+          />
+        </div>
+
+        <div class="actions">
+          <button class="btn" type="button" onclick="alert('edit')">
+            Chỉnh sửa
+          </button>
+          <a class="btn ghost" href="#portal">Về Portal</a>
+        </div>
+
+        <div class="badge">
+          <img
+            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='48'%3E%3Crect fill='%23ccfbf1' width='120' height='48'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' fill='%230f766e' font-size='12' font-family='sans-serif'%3EBadge%3C/text%3E%3C/svg%3E"
+            width="120"
+            height="48"
+            alt="Huy hiệu intern Line Alpha"
+          />
+        </div>
+      </article>
+    </main>
+  </body>
+</html>

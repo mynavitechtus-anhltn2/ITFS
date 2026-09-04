@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Component Architecture · bài làm</title>
+    <style>
+      :root {
+        --bg: #f6f4ef;
+        --surface: #fffdf8;
+        --ink: #1c1917;
+        --muted: #57534e;
+        --line: #e7e5e4;
+        --accent: #0f766e;
+        --warn: #9a3412;
+        --warn-bg: #ffedd5;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: system-ui, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        line-height: 1.5;
+      }
+      .banner {
+        max-width: 40rem;
+        margin: 1rem auto 0;
+        padding: 0.75rem 1rem;
+        background: var(--warn-bg);
+        color: var(--warn);
+        border-radius: 8px;
+        font-size: 0.9rem;
+      }
+      #root {
+        max-width: 40rem;
+        margin: 1rem auto 2rem;
+        padding: 0 1rem;
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+      }
+      .hero {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+      .avatar {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+      .name {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      .role {
+        margin: 0.15rem 0 0;
+        color: var(--muted);
+        font-size: 0.875rem;
+      }
+      .bio {
+        margin: 0 0 1rem;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 0.25rem;
+      }
+      .btn {
+        font: inherit;
+        cursor: pointer;
+        border-radius: 8px;
+        padding: 0.45rem 0.85rem;
+        border: 1px solid var(--line);
+        text-decoration: none;
+        display: inline-block;
+      }
+      .btn-primary {
+        background: var(--ink);
+        color: #fff;
+        border-color: var(--ink);
+      }
+      .btn-ghost {
+        background: #fff;
+        color: var(--ink);
+      }
+      .projects h2 {
+        margin: 0 0 0.75rem;
+        font-size: 1.05rem;
+      }
+      .project {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 0.75rem 0.85rem;
+        margin-bottom: 0.65rem;
+      }
+      .project h3 {
+        margin: 0 0 0.25rem;
+        font-size: 1rem;
+      }
+      .project p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      BÀI LÀM — tách ≥3 component (ProfileHeader, ProfileBio, ProfileActions, ProjectCard).
+      Giải thích: ./notes.md
+      Reset: cp before.html index.html
+      Clarify:
+      1. Header / Bio / Actions / Card đổi độc lập; list lặp → ProjectCard.
+      2. Header: name, role, avatarSrc, avatarAlt. Bio: children. Actions: onEdit, portalHref.
+      3. “Chỉnh sửa” = callback prop onEdit từ ProfilePage (chưa lift state sâu — để bài UI State).
+    -->
+    <div class="banner">
+      <strong>index.html</strong> — bài làm: refactor god
+      <code>ProfilePage</code> thành ≥3 component + props rõ.
+    </div>
+    <div id="root"></div>
+
+    <script
+      src="https://unpkg.com/react@18.3.1/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+    <script src="https://unpkg.com/@babel/standalone@7.26.0/babel.min.js"></script>
+    <script type="text/babel">
+      const { createRoot } = ReactDOM;
+
+      const AVATAR_SRC =
+        "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Crect fill='%230f766e' width='72' height='72'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' fill='white' font-size='28' font-family='sans-serif'%3EMA%3C/text%3E%3C/svg%3E";
+
+      function ProfileHeader({ name, role, avatarSrc, avatarAlt }) {
+        return (
+          <div className="hero">
+            <img
+              className="avatar"
+              src={avatarSrc}
+              width="72"
+              height="72"
+              alt={avatarAlt}
+            />
+            <div>
+              <h1 className="name">{name}</h1>
+              <p className="role">{role}</p>
+            </div>
+          </div>
+        );
+      }
+
+      function ProfileBio({ children }) {
+        return <p className="bio">{children}</p>;
+      }
+
+      function ProfileActions({ onEdit, portalHref }) {
+        return (
+          <div className="actions">
+            <button type="button" className="btn btn-primary" onClick={onEdit}>
+              Chỉnh sửa
+            </button>
+            <a className="btn btn-ghost" href={portalHref}>
+              Về Portal
+            </a>
+          </div>
+        );
+      }
+
+      function ProjectCard({ title, desc }) {
+        return (
+          <article className="project">
+            <h3>{title}</h3>
+            <p>{desc}</p>
+          </article>
+        );
+      }
+
+      function ProfilePage() {
+        const projects = [
+          {
+            title: "Portal changelog",
+            desc: "Trang tĩnh liệt kê thay đổi nội bộ.",
+          },
+          {
+            title: "Profile card",
+            desc: "Card hồ sơ — luyện semantics & mockup spec.",
+          },
+        ];
+
+        function handleEdit() {
+          alert("edit");
+        }
+
+        return (
+          <main>
+            <article className="card">
+              <ProfileHeader
+                name="Minh Anh"
+                role="Frontend Intern · Line Alpha"
+                avatarSrc={AVATAR_SRC}
+                avatarAlt="Ảnh đại diện của Minh Anh"
+              />
+              <ProfileBio>
+                Đang luyện Component Foundations: cắt UI thành phần có trách
+                nhiệm rõ — không chỉ “cho file ngắn”.
+              </ProfileBio>
+              <ProfileActions onEdit={handleEdit} portalHref="#portal" />
+            </article>
+
+            <section
+              className="card projects"
+              aria-labelledby="projects-heading"
+            >
+              <h2 id="projects-heading">Dự án gần đây</h2>
+              {projects.map((p) => (
+                <ProjectCard key={p.title} title={p.title} desc={p.desc} />
+              ))}
+            </section>
+          </main>
+        );
+      }
+
+      createRoot(document.getElementById("root")).render(<ProfilePage />);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Structure Review · before</title>
+    <style>
+      :root {
+        --bg: #f6f4ef;
+        --surface: #fffdf8;
+        --ink: #1c1917;
+        --muted: #57534e;
+        --line: #e7e5e4;
+        --accent: #0f766e;
+        --warn: #9a3412;
+        --warn-bg: #ffedd5;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: system-ui, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        line-height: 1.5;
+      }
+      .banner {
+        max-width: 44rem;
+        margin: 1rem auto 0;
+        padding: 0.75rem 1rem;
+        background: var(--warn-bg);
+        color: var(--warn);
+        border-radius: 8px;
+        font-size: 0.9rem;
+      }
+      #root {
+        max-width: 44rem;
+        margin: 1rem auto 2rem;
+        padding: 0 1rem;
+      }
+      .dashboard {
+        display: flex;
+        gap: 1.25rem;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 1.25rem;
+      }
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        min-width: 140px;
+        border-right: 1px solid var(--line);
+        padding-right: 1rem;
+      }
+      .sidebar-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+      main {
+        flex: 1;
+      }
+      main h1 {
+        font-size: 1.15rem;
+        margin: 0 0 0.75rem;
+      }
+      main ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      main li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--line);
+      }
+      main button {
+        border: none;
+        background: none;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      BEFORE — giả lập 1 PR do AI viết ("tách Dashboard thành component").
+      KHÔNG sửa file này. Đọc kỹ + mở Console trước khi kết luận.
+      Bài làm: index.md (ghi finding, không cần sửa code ở bài này).
+    -->
+    <div class="banner">
+      <strong>before</strong> — PR do AI sinh (giả lập). Mở Console trước, rồi
+      đọc code. Ghi finding vào <code>index.md</code>.
+    </div>
+    <div id="root"></div>
+
+    <script
+      src="https://unpkg.com/react@18.3.1/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+    <script src="https://unpkg.com/@babel/standalone@7.26.0/babel.min.js"></script>
+    <script type="text/babel">
+      const { useState } = React;
+      const { createRoot } = ReactDOM;
+
+      // ================= "AI generated" — review kỹ trước khi merge =================
+
+      // SidebarIcon nhận `theme` nhưng không hề dùng tới nó ở đâu cả
+      function SidebarIcon({ theme, icon }) {
+        return <span className="icon">{icon === "home" ? "🏠" : "📁"}</span>;
+      }
+
+      // SidebarItem cũng chỉ nhận `theme` để "chuyển hộ" xuống SidebarIcon
+      function SidebarItem({ theme, label, icon }) {
+        return (
+          <div className="sidebar-item">
+            <SidebarIcon theme={theme} icon={icon} />
+            <span>{label}</span>
+          </div>
+        );
+      }
+
+      // Component này không thêm bất cứ gì — chỉ bọc children
+      function SidebarWrapper({ children }) {
+        return <React.Fragment>{children}</React.Fragment>;
+      }
+
+      function Sidebar({ theme }) {
+        return (
+          <SidebarWrapper>
+            <nav className="sidebar">
+              <SidebarItem theme={theme} icon="home" label="Trang chủ" />
+              <SidebarItem theme={theme} icon="folder" label="Dự án" />
+            </nav>
+          </SidebarWrapper>
+        );
+      }
+
+      function Dashboard() {
+        // AI tự "bịa" 1 hook nghe rất hợp lý — nhưng KHÔNG tồn tại trong React
+        // hay ở bất kỳ đâu trong file này. Không grep/không chạy thử sẽ không thấy.
+        const profile = useSyncedProfile();
+
+        const [data, setData] = useState([
+          { id: 1, title: "Portal changelog", starred: true },
+          { id: 2, title: "Profile card", starred: false },
+        ]);
+
+        function handleStuff(id) {
+          setData(
+            data.map((d) => (d.id === id ? { ...d, starred: !d.starred } : d)),
+          );
+        }
+
+        return (
+          <div className="dashboard">
+            <Sidebar theme="dark" />
+            <main>
+              <h1>Xin chào, {profile.name}</h1>
+              <ul>
+                {data.map((d) => (
+                  <li key={d.id}>
+                    {d.title}
+                    <button type="button" onClick={() => handleStuff(d.id)}>
+                      {d.starred ? "★" : "☆"}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </main>
+          </div>
+        );
+      }
+
+      createRoot(document.getElementById("root")).render(<Dashboard />);
+    </script>
+  </body>
+</html>

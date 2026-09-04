@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Responsive · bài làm</title>
+    <style>
+      :root {
+        --bg: #f6f4ef;
+        --surface: #fffdf8;
+        --ink: #1c1917;
+        --muted: #57534e;
+        --line: #e7e5e4;
+        --warn: #9a3412;
+        --warn-bg: #ffedd5;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: system-ui, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        line-height: 1.5;
+      }
+      .banner {
+        max-width: 52rem;
+        margin: 1rem auto 0;
+        padding: 0.75rem 1rem;
+        background: var(--warn-bg);
+        color: var(--warn);
+        border-radius: 8px;
+        font-size: 0.9rem;
+      }
+      .wrap {
+        max-width: 52rem;
+        margin: 1rem auto 2rem;
+        padding: 0 1rem;
+      }
+      h1 {
+        font-size: 1.25rem;
+        margin: 0 0 0.75rem;
+      }
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      .toolbar .chip {
+        padding: 0.4rem 0.75rem;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface);
+        font-size: 0.9rem;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      @media (min-width: 640px) {
+        .grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      .card {
+        padding: 1rem;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+      .card h2 {
+        margin: 0 0 0.35rem;
+        font-size: 1rem;
+      }
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      BÀI LÀM — mobile-first: 1 cột base → 2 cột từ min-width 640px.
+      Toolbar: flex wrap, bỏ white-space: nowrap.
+      Giải thích: ./notes.md
+      Reset: cp before.html index.html
+      Clarify:
+      1. Mobile không 2 cột — card ~280px × 2 + gap không vừa ~360px.
+      2. Card đọc được khi full width 1 cột; không ép min-width 280 khi hẹp.
+      3. Toolbar wrap theo hàng, không nowrap gây scroll ngang.
+    -->
+    <div class="banner">
+      <strong>index.html</strong> — bài làm: Grid/Flex responsive, không scroll
+      ngang ở ~360px.
+    </div>
+
+    <div class="wrap">
+      <h1>Projects</h1>
+      <div class="toolbar">
+        <span class="chip">All</span>
+        <span class="chip">Starred</span>
+        <span class="chip">Archived</span>
+        <span class="chip">Shared with me</span>
+      </div>
+
+      <div class="grid">
+        <article class="card">
+          <h2>Portal changelog</h2>
+          <p>Trang tĩnh liệt kê thay đổi nội bộ — luyện landmark và heading.</p>
+        </article>
+        <article class="card">
+          <h2>Profile card</h2>
+          <p>Card hồ sơ — spacing/typography theo mockup spec.</p>
+        </article>
+        <article class="card">
+          <h2>Box model lab</h2>
+          <p>Đo padding / border trong DevTools; border-box.</p>
+        </article>
+        <article class="card">
+          <h2>Flex grid lab</h2>
+          <p>Một trục vs lưới hai cột — ý định layout rõ.</p>
+        </article>
+      </div>
+    </div>
+  </body>
+</html>

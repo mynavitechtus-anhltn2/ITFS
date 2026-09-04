@@ -1,0 +1,1613 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Component Foundations — Component đến CSR/SSR</title>
+    <style>
+      :root {
+        --bg: #ffffff;
+        --panel: #ffffff;
+        --panel-2: #f6f6f9;
+        --border: #e2e2ea;
+        --text: #181825;
+        --text-dim: #43435a;
+        --text-faint: #8181a0;
+        --accent: #4f46e5;
+        --accent-active: #4338ca;
+        --accent-soft: #eef0ff;
+        --ok: #15803d;
+        --ok-soft: #eaf6ee;
+        --warn: #b45309;
+        --warn-soft: #fbf1e4;
+        --bad: #b91c1c;
+        --bad-soft: #fdeeee;
+        --info: #2f6fed;
+        --info-soft: #eaf1ff;
+        --spark: #7c3aed;
+        --spark-soft: #f3edfd;
+        --code-bg: #181825;
+        --code-text: #e9e4f5;
+        --radius: 14px;
+        --scale: 1;
+      }
+      html.dark {
+        --bg: #0f0f16;
+        --panel: #15151f;
+        --panel-2: #1b1b27;
+        --border: #2b2b3a;
+        --text: #f1f1f7;
+        --text-dim: #c7c7d8;
+        --text-faint: #7d7d96;
+        --accent: #818cf8;
+        --accent-active: #a5b4fc;
+        --accent-soft: rgba(129, 140, 248, 0.14);
+        --ok: #4ade80;
+        --ok-soft: rgba(74, 222, 128, 0.12);
+        --warn: #fbbf24;
+        --warn-soft: rgba(251, 191, 36, 0.12);
+        --bad: #f87171;
+        --bad-soft: rgba(248, 113, 113, 0.12);
+        --info: #7aa2f7;
+        --info-soft: rgba(122, 162, 247, 0.14);
+        --spark: #b79ceb;
+        --spark-soft: rgba(183, 156, 235, 0.14);
+        --code-bg: #0a0a10;
+        --code-text: #e9e4f5;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto,
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+        transition:
+          background 0.2s ease,
+          color 0.2s ease;
+      }
+      .stage {
+        max-width: 1220px;
+        margin: 0 auto;
+        padding: 34px 28px 70px;
+      }
+
+      /* header */
+      .top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        margin-bottom: 24px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+      .brand .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+      .top-tools {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .tool-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--panel);
+        color: var(--text-dim);
+        font-size: 14px;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        transition:
+          border-color 0.15s,
+          color 0.15s;
+      }
+      .tool-btn:hover {
+        color: var(--text);
+        border-color: var(--text-faint);
+      }
+      .progress-wrap {
+        height: 3px;
+        background: var(--panel-2);
+        border-radius: 99px;
+        overflow: hidden;
+        margin-bottom: 26px;
+      }
+      .progress-bar {
+        height: 100%;
+        background: var(--accent);
+        width: 0%;
+        transition: width 0.25s ease;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 250px minmax(0, 1fr);
+        gap: 0;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        background: var(--panel);
+      }
+      .side {
+        border-right: 1px solid var(--border);
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        max-height: 680px;
+        overflow-y: auto;
+      }
+      .side-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 9px 10px;
+        border-radius: 9px;
+        cursor: pointer;
+        color: var(--text-dim);
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .side-row:hover {
+        background: var(--panel-2);
+        color: var(--text);
+      }
+      .side-row.active {
+        background: var(--accent-soft);
+        color: var(--text);
+      }
+      .side-badge {
+        flex-shrink: 0;
+        min-width: 26px;
+        height: 22px;
+        border-radius: 7px;
+        border: 1px solid var(--border);
+        display: grid;
+        place-items: center;
+        font-size: 10.5px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        color: var(--text-faint);
+        padding: 0 4px;
+      }
+      .side-row.active .side-badge {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+      .side-sep {
+        height: 1px;
+        background: var(--border);
+        margin: 8px 6px;
+      }
+
+      .content {
+        padding: 26px 32px 40px;
+        font-size: calc(15px * var(--scale));
+      }
+      .content-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 6px;
+      }
+      .kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11.5px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--accent);
+        background: var(--accent-soft);
+        padding: 4px 10px;
+        border-radius: 99px;
+        margin-bottom: 14px;
+      }
+      h1.slide-title {
+        font-size: calc(26px * var(--scale));
+        line-height: 1.18;
+        margin: 0 0 8px;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+      }
+      p.slide-sub {
+        color: var(--text-dim);
+        font-size: calc(14.5px * var(--scale));
+        line-height: 1.6;
+        margin: 0 0 20px;
+        max-width: 780px;
+      }
+
+      .cards {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .card {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px 20px;
+        background: var(--panel-2);
+        min-width: 0;
+      }
+      .card-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        font-size: 11.5px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--text-faint);
+        margin-bottom: 12px;
+      }
+      .card-head .bar {
+        width: 14px;
+        height: 2px;
+        border-radius: 99px;
+        background: currentColor;
+        flex: none;
+      }
+      .card p {
+        margin: 0;
+        color: var(--text-dim);
+        line-height: 1.65;
+        font-size: calc(14px * var(--scale));
+      }
+      .card ul {
+        margin: 0;
+        padding-left: 19px;
+        color: var(--text-dim);
+        line-height: 1.75;
+        font-size: calc(13.6px * var(--scale));
+      }
+      .card ul li {
+        margin-bottom: 6px;
+      }
+      .card ul li:last-child {
+        margin-bottom: 0;
+      }
+      .card.why {
+        border-left: 3px solid var(--accent);
+      }
+      .card.why .card-head {
+        color: var(--accent);
+      }
+      .card.key {
+        border-left: 3px solid var(--info);
+      }
+      .card.key .card-head {
+        color: var(--info);
+      }
+      .card.compare {
+        border-left: 3px solid var(--ok);
+      }
+      .card.compare .card-head {
+        color: var(--ok);
+      }
+      .card.nuance {
+        border-left: 3px solid var(--warn);
+      }
+      .card.nuance .card-head {
+        color: var(--warn);
+      }
+      .card.check {
+        border-left: 3px solid var(--ok);
+      }
+      .card.check .card-head {
+        color: var(--ok);
+      }
+      .card.case {
+        border-left: 3px solid var(--text-faint);
+      }
+      .card.case .card-head {
+        color: var(--text-faint);
+      }
+      .card.qa {
+        border-left: 3px solid var(--spark);
+        background: var(--spark-soft);
+      }
+      .card.qa .card-head {
+        color: var(--spark);
+      }
+      .card.figure {
+        border-left: 3px solid var(--text-faint);
+        background: var(--panel);
+      }
+      .card.figure .card-head {
+        color: var(--text-faint);
+      }
+      /* Dùng .figure-body — không đặt class .figure trên card (tránh đè padding card) */
+      .card.flowcard {
+        border-left: 3px solid var(--info);
+      }
+      .card.flowcard .card-head {
+        color: var(--info);
+      }
+
+      /* ---- sides (bad / good two-panel compare) ---- */
+      .sides {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 12px;
+      }
+      @media (max-width: 640px) {
+        .sides {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+      .pane {
+        border: 1px solid var(--border);
+        border-radius: 11px;
+        padding: 14px 15px;
+        background: var(--panel);
+        min-width: 0;
+      }
+      .pane .hd {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
+      .pane.bad {
+        border-color: color-mix(in srgb, var(--bad) 32%, var(--border));
+      }
+      .pane.bad .hd {
+        color: var(--bad);
+      }
+      .pane.good {
+        border-color: color-mix(in srgb, var(--ok) 32%, var(--border));
+      }
+      .pane.good .hd {
+        color: var(--ok);
+      }
+      .pane ul {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--text-dim);
+        font-size: calc(13.2px * var(--scale));
+        line-height: 1.6;
+      }
+      .pane ul li {
+        margin-bottom: 4px;
+      }
+      .pane .code-block {
+        margin-top: 8px;
+      }
+
+      .code-block {
+        margin-top: 2px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+        background: var(--code-bg);
+      }
+      .code-label {
+        font-size: 10.5px;
+        color: #9d9686;
+        padding: 7px 13px;
+        border-bottom: 1px solid #33301f;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        letter-spacing: 0.02em;
+      }
+      .code-block pre {
+        margin: 0;
+        padding: 13px 15px;
+        overflow-x: auto;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: calc(12.2px * var(--scale));
+        line-height: 1.6;
+        color: var(--code-text);
+      }
+
+      .mini-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: calc(13px * var(--scale));
+      }
+      .mini-table th,
+      .mini-table td {
+        text-align: left;
+        padding: 9px 12px;
+        border-bottom: 1px solid var(--border);
+        color: var(--text-dim);
+        vertical-align: top;
+      }
+      .mini-table thead th {
+        color: var(--text-faint);
+        font-weight: 700;
+        font-size: 10.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        background: var(--panel);
+      }
+      .mini-table tbody tr:hover {
+        background: var(--panel);
+      }
+      .mini-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .link-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 4px;
+      }
+      .link-chip {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-dim);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 5px 10px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        background: var(--panel);
+      }
+
+      .figure-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 6px 0 0;
+        width: 100%;
+      }
+      .figure-body svg {
+        display: block;
+        width: 100%;
+        max-width: 480px;
+        height: auto;
+        min-height: 140px;
+      }
+      .figure-body .figure-caption {
+        margin: 10px 0 0;
+        padding: 0;
+        width: 100%;
+        max-width: 480px;
+        font-size: 12.5px;
+        line-height: 1.5;
+        color: var(--text-faint);
+        text-align: center;
+      }
+
+      .flow {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+        gap: 6px;
+      }
+      .flow-step {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        padding: 9px 13px;
+        font-size: calc(12.6px * var(--scale));
+        color: var(--text-dim);
+        flex: 1 1 150px;
+      }
+      .flow-step .idx {
+        flex: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--info);
+        color: #fff;
+        font-size: 10.5px;
+        font-weight: 700;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        display: grid;
+        place-items: center;
+      }
+      .flow-arrow {
+        color: var(--text-faint);
+        font-size: 15px;
+        flex: 0 0 auto;
+        padding: 0 2px;
+        align-self: center;
+      }
+
+      /* cover */
+      .cover {
+        padding: 20px 6px 10px;
+      }
+      .cover .kicker {
+        margin-bottom: 20px;
+      }
+      .cover h1 {
+        font-size: calc(42px * var(--scale));
+        line-height: 1.12;
+        font-weight: 800;
+        margin: 0 0 16px;
+        letter-spacing: -0.02em;
+      }
+      .cover .lead {
+        color: var(--text-dim);
+        font-size: calc(16px * var(--scale));
+        line-height: 1.7;
+        max-width: 680px;
+        margin: 0 0 22px;
+      }
+      .cover ul {
+        padding-left: 19px;
+        color: var(--text-dim);
+        line-height: 1.85;
+        font-size: calc(14px * var(--scale));
+        max-width: 680px;
+      }
+
+      /* board */
+      .board-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .board-col h3 {
+        font-size: calc(13px * var(--scale));
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--text-faint);
+        margin: 0 0 10px;
+      }
+      .board-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 12px;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        background: var(--panel-2);
+        margin-bottom: 7px;
+        font-size: calc(13.4px * var(--scale));
+      }
+      .board-item .num {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 11.5px;
+        color: var(--text-faint);
+        min-width: 22px;
+      }
+      .board-item .status {
+        margin-left: auto;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 99px;
+        white-space: nowrap;
+      }
+      .status.done {
+        background: var(--ok-soft);
+        color: var(--ok);
+      }
+      .status.pending {
+        background: var(--warn-soft);
+        color: var(--warn);
+      }
+      @media (max-width: 760px) {
+        .board-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .pager {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 14px;
+        margin-top: 26px;
+      }
+      .pbtn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--panel);
+        color: var(--text);
+        font-size: 16px;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+      }
+      .pbtn:hover:not(:disabled) {
+        background: var(--panel-2);
+        border-color: var(--text-faint);
+      }
+      .pbtn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+      .pager .count {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 13px;
+        color: var(--text-faint);
+      }
+
+      @media (max-width: 760px) {
+        .stage {
+          padding: 22px 14px 50px;
+        }
+        .layout {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .side {
+          flex-direction: row;
+          overflow-x: auto;
+          max-height: none;
+          border-right: none;
+          border-bottom: 1px solid var(--border);
+        }
+        .side-row {
+          flex-shrink: 0;
+        }
+        .content {
+          padding: 20px 18px 28px;
+        }
+        .cover h1 {
+          font-size: calc(28px * var(--scale));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stage">
+      <div class="top">
+        <div class="brand">
+          <span class="dot"></span> ITFS · Pillar 05 — Component Foundations
+        </div>
+        <div class="top-tools">
+          <button class="tool-btn" id="fontMinus" title="Giảm cỡ chữ">
+            A−
+          </button>
+          <button class="tool-btn" id="fontPlus" title="Tăng cỡ chữ">A+</button>
+          <button class="tool-btn" id="themeToggle" title="Đổi theme">◐</button>
+        </div>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <div class="layout">
+        <nav class="side" id="side"></nav>
+        <main class="content" id="content"></main>
+      </div>
+
+      <div class="pager">
+        <button class="pbtn" id="prevBtn">←</button>
+        <span class="count" id="countLabel">01 / 12</span>
+        <button class="pbtn" id="nextBtn">→</button>
+      </div>
+    </div>
+
+    <script>
+      /* ============================================================
+   UI/UX Engineering — từ Semantic HTML đến Component Architecture
+   Mỗi topic: Bản chất → Kiến thức → So sánh → Nuance
+   → Minh họa/Flow → Ví dụ code → Case ngành → Case thực tế
+   ============================================================ */
+      const slides = [
+        {
+          type: "cover",
+          badge: "Cover",
+          title: "Overview",
+          data: {
+            kicker:
+              "ITFS · Pillar 05 — UI/UX Engineering · Component Foundations",
+            h1: 'Từ <span style="color:var(--accent)">Component Architecture</span> đến <span style="color:var(--accent)">CSR vs SSR</span>',
+            lead: "Các quyết định khi cắt component, đặt state, làm responsive, accessibility native-first, chọn mô hình render — và khi đọc cấu trúc code do AI sinh.",
+            bullets: [
+              "Component & state: ranh giới trách nhiệm, lifting state, debounce input.",
+              "Responsive có ý định · Accessibility native-first · CSR vs SSR.",
+              "AI Structure Review (đọc cấu trúc) · Clarify chủ động trước khi code.",
+            ],
+          },
+        },
+
+        {
+          type: "topic",
+          badge: "Intro",
+          title: "Vì sao cần phản biện",
+          data: {
+            kicker: "Bối cảnh",
+            h1: 'AI viết component rất nhanh — và rất hay <span style="color:var(--accent)">đúng cú pháp, sai kiến trúc</span>',
+            sub: "Mỗi quyết định nhỏ — cắt boundary, đặt state, chọn breakpoint, native vs ARIA — đáng dừng 30 giây suy nghĩ, trước khi AI hoặc chính bạn code cho xong.",
+            why: "Component chạy được, style đẹp, vẫn có thể là god component, props drilling giả, hoặc hook bị bịa. Việc còn lại — và duy nhất bạn không thể giao cho AI — là biết đọc cấu trúc và Clarify trước khi coi là xong.",
+            key: [
+              '<b>"Chạy được" không phải tiêu chí đạt</b> — architecture sai vẫn xanh, vẫn render; chỉ lộ khi đọc code hoặc đổi data.',
+              "<b>State sai chỗ</b> — hai nguồn sự thật, UI lệch pha, hoặc kéo global store cho một form nhỏ.",
+              '<b>Brief tưởng đủ rõ</b> vẫn thiếu boundary / ownership / responsive — Clarify muộn thì sửa component đã "tưởng xong".',
+            ],
+          },
+        },
+
+        {
+          type: "topic",
+          badge: "Cheat",
+          title: "Câu hỏi bỏ túi",
+          data: {
+            kicker: "Cheat sheet · Component Foundations",
+            h1: 'Mỗi chủ đề quy về <span style="color:var(--accent)">một câu hỏi bỏ túi</span>',
+            sub: "Nếu chỉ nhớ được một dòng — câu hỏi ở cột giữa là thứ tự hỏi mình (hoặc hỏi lại AI) trước khi ship.",
+            bigTable: {
+              head: ["Chủ đề", "Câu hỏi bỏ túi", "Giá phải trả nếu bỏ qua"],
+              rows: [
+                [
+                  "Component Architecture",
+                  "Ranh giới trách nhiệm của khối này là gì — kể được không?",
+                  "God component, diff 400 dòng cho một đổi màu nút",
+                ],
+                [
+                  "UI State",
+                  "Ai đang sở hữu sự thật cho giá trị này?",
+                  "Hai state trùng nhau, UI lệch pha",
+                ],
+                [
+                  "Responsive",
+                  "Ở màn hẹp, cấu trúc có đổi hay chỉ co giãn %?",
+                  "Tràn ngang, mất CTA quan trọng trên mobile",
+                ],
+                [
+                  "Accessibility",
+                  "Control này native, hay tự dựng và tự gánh keyboard?",
+                  "Rủi ro pháp lý + mất nhóm người dùng dùng bàn phím",
+                ],
+                [
+                  "CSR vs SSR",
+                  "Ai render HTML lần đầu — trình duyệt hay server?",
+                  "Landing mất SEO, hoặc dashboard nội bộ tốn server vô ích",
+                ],
+                [
+                  "AI Structure Review",
+                  'Hook/API này có thật trong stack, hay AI vừa "bịa" nghe hợp lý?',
+                  'God component/props drilling giả lọt qua review vì "chạy được"',
+                ],
+                [
+                  "Proactive Clarify",
+                  'Brief "tưởng đủ rõ" này còn khoảng trống kiến trúc nào chưa nói?',
+                  "Sửa lại component đã tưởng xong vì thiếu boundary/state rõ",
+                ],
+              ],
+            },
+            nuance: [
+              "Không cái nào là <b>lỗi cú pháp</b> — compiler/linter không bắt được.",
+              "Tất cả là lỗi <b>thiếu bối cảnh</b>: bối cảnh sản phẩm, bối cảnh người dùng, bối cảnh team.",
+              "Bối cảnh đó chỉ bạn cung cấp được — AI không tự có.",
+            ],
+          },
+        },
+
+        {
+          type: "topic",
+          badge: "01",
+          title: "Component Architecture",
+          data: {
+            kicker: "Component Foundations",
+            h1: "Component Architecture — hiểu cách cắt & ghép UI",
+            sub: "Architecture không phải folder tree đẹp — mà là ranh giới trách nhiệm bạn giải thích được với buddy.",
+            why: 'Một file "cả trang" chạy được — đến khi đổi nút ở 3 chỗ sửa sót 1, review PR không biết boundary, AI sinh thêm 200 dòng vào đúng god component.',
+            key: [
+              "<b>Props</b> = hợp đồng dữ liệu vào, đặt tên theo ý nghĩa UI (<code>title</code>, <code>onEdit</code>) không theo nguồn tạm",
+              "<b>Composition</b> qua <code>children</code>: cha không cần biết hết nội dung bên trong con",
+              "Atomic Design (Brad Frost): Atoms → Molecules → Organisms → Templates — chỉ là cách <i>gọi tên</i>, không phải luật thư mục bắt buộc",
+            ],
+            figure: {
+              caption:
+                "Cắt Profile page thành cây component có tên, mỗi khối kể được một câu trách nhiệm.",
+              svg: `<svg viewBox="0 0 460 200" xmlns="http://www.w3.org/2000/svg">
+      <rect x="180" y="10" width="100" height="34" rx="7" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+      <text x="192" y="31" font-size="11" fill="var(--accent)" font-weight="700" font-family="ui-monospace,monospace">ProfilePage</text>
+      <line x1="230" y1="44" x2="58" y2="90" stroke="var(--text-faint)" stroke-width="1.3"/>
+      <line x1="230" y1="44" x2="168" y2="90" stroke="var(--text-faint)" stroke-width="1.3"/>
+      <line x1="230" y1="44" x2="278" y2="90" stroke="var(--text-faint)" stroke-width="1.3"/>
+      <line x1="230" y1="44" x2="388" y2="90" stroke="var(--text-faint)" stroke-width="1.3"/>
+      <rect x="10" y="90" width="96" height="34" rx="7" fill="var(--panel-2)" stroke="var(--info)" stroke-width="1.4"/>
+      <text x="17" y="111" font-size="10" fill="var(--info)" font-family="ui-monospace,monospace">ProfileHeader</text>
+      <rect x="120" y="90" width="96" height="34" rx="7" fill="var(--panel-2)" stroke="var(--info)" stroke-width="1.4"/>
+      <text x="140" y="111" font-size="10" fill="var(--info)" font-family="ui-monospace,monospace">ProfileBio</text>
+      <rect x="230" y="90" width="96" height="34" rx="7" fill="var(--panel-2)" stroke="var(--info)" stroke-width="1.4"/>
+      <text x="238" y="111" font-size="10" fill="var(--info)" font-family="ui-monospace,monospace">ProfileActions</text>
+      <rect x="340" y="90" width="96" height="34" rx="7" fill="var(--panel-2)" stroke="var(--info)" stroke-width="1.4"/>
+      <text x="350" y="111" font-size="10" fill="var(--info)" font-family="ui-monospace,monospace">ProjectList</text>
+      <line x1="388" y1="124" x2="388" y2="150" stroke="var(--text-faint)" stroke-width="1.3" stroke-dasharray="4,3"/>
+      <rect x="328" y="150" width="120" height="30" rx="6" fill="var(--panel-2)" stroke="var(--border)" stroke-dasharray="4,3"/>
+      <text x="336" y="169" font-size="10" fill="var(--text-dim)" font-family="ui-monospace,monospace">ProjectCard × N</text>
+    </svg>`,
+            },
+            nuance: [
+              'God component và "component confetti" (tách quá sớm, file rỗng) đều là mùi kiến trúc',
+              'Props drilling có vấn đề khi props không liên quan đi xuyên qua component trung gian chỉ để "chuyển hộ"',
+            ],
+            qa: {
+              q: "List re-render lại toàn bộ (mất focus, giật animation) mỗi khi filter, không được thêm library ảo hoá (react-window), sửa sao?",
+              a: "Thường do dùng index mảng làm key — đổi sang key ổn định theo id thật của item để React nhận diện đúng phần tử cũ/mới khi filter; nếu props của từng ProjectCard không đổi, bọc thêm React.memo để bỏ qua re-render không cần thiết.",
+            },
+          },
+        },
+
+        {
+          type: "topic",
+          badge: "02",
+          title: "UI State",
+          data: {
+            kicker: "Component Foundations",
+            h1: "UI State — local, controlled, lifting",
+            sub: "Không phải thuộc API hook — mà biết ai sở hữu sự thật (single source of truth) trên cây component.",
+            why: "UI thật đổi theo thời gian: gõ search, tick filter, mở/đóng panel. Đặt state sai chỗ → hai ô lệch nhau, hoặc vội kéo global store cho một form nhỏ.",
+            key: [
+              "<b>Local state</b>: chỉ 1 component cần → để tại đó. <b>Controlled input</b>: state + <code>onChange</code> là nguồn sự thật",
+              "<b>Lifting state up</b>: 2 anh em cần cùng dữ liệu → đưa lên cha chung gần nhất",
+              "<b>Derived state</b> (<code>filtered</code>, <code>total</code>…) tính lại khi render/<code>useMemo</code> — không cần <code>useState</code> riêng",
+            ],
+            figure: {
+              caption:
+                "Lift query/starredOnly lên ProjectsPage; con nhận qua props, callback đi ngược qua onChange.",
+              svg: `<svg viewBox="0 0 340 170" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="dArrow" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--info)"/></marker>
+        <marker id="dArrowWarn" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="var(--warn)"/></marker>
+      </defs>
+      <rect x="90" y="10" width="160" height="36" rx="7" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+      <text x="100" y="32" font-size="10" fill="var(--accent)" font-weight="700" font-family="ui-monospace,monospace">ProjectsPage (query, starredOnly)</text>
+      <line x1="140" y1="46" x2="65" y2="90" stroke="var(--info)" stroke-width="1.3" marker-end="url(#dArrow)"/>
+      <line x1="200" y1="46" x2="275" y2="90" stroke="var(--info)" stroke-width="1.3" marker-end="url(#dArrow)"/>
+      <text x="45" y="72" font-size="9" fill="var(--info)">props: query</text>
+      <text x="222" y="72" font-size="9" fill="var(--info)">props: filtered list</text>
+      <rect x="10" y="95" width="110" height="34" rx="7" fill="var(--panel-2)" stroke="var(--border)"/>
+      <text x="24" y="116" font-size="10" fill="var(--text-dim)" font-family="ui-monospace,monospace">SearchBar</text>
+      <rect x="220" y="95" width="110" height="34" rx="7" fill="var(--panel-2)" stroke="var(--border)"/>
+      <text x="234" y="116" font-size="10" fill="var(--text-dim)" font-family="ui-monospace,monospace">ProjectList</text>
+      <line x1="75" y1="95" x2="140" y2="46" stroke="var(--warn)" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#dArrowWarn)"/>
+      <text x="15" y="150" font-size="9" fill="var(--warn)">callback ngược onChange — nét đứt</text>
+    </svg>`,
+            },
+            compare: {
+              head: ["Hook", "Trigger re-render?", "Dùng khi"],
+              rows: [
+                [
+                  "useState",
+                  "Có",
+                  "Giá trị đơn giản, ít bước cập nhật liên quan nhau",
+                ],
+                [
+                  "useReducer",
+                  "Có",
+                  "Nhiều hành động cùng đổi 1 state phức tạp",
+                ],
+                [
+                  "useRef",
+                  "Không",
+                  "Lưu giá trị 'ngầm' không cần render lại (previous value, timer id, DOM node)",
+                ],
+              ],
+            },
+            nuance: [
+              'Mùi thật là <b>trùng sự thật</b> (2 <code>useState</code> cho cùng 1 query) — không phải "nhiều useState"',
+              "Global store chỉ cần khi dữ liệu vượt khỏi 1 trang/route — search-filter 1 màn gần như luôn local/lift",
+            ],
+            qa: {
+              q: "Cần so sánh giá trị input hiện tại với giá trị ngay trước đó (previous value) mà không muốn thêm re-render hay cài lib usePrevious, làm sao?",
+              a: "Tự viết bằng useRef (không trigger render) + 1 useEffect ngắn: sau mỗi lần render, gán ref.current = value hiện tại — lần render sau, ref.current vẫn giữ giá trị của lần trước. Khoảng 4-5 dòng, không cần dependency ngoài.",
+            },
+          },
+        },
+
+        {
+          type: "topic",
+          badge: "★",
+          title: "Debounce Input State",
+          data: {
+            kicker: "Bonus",
+            h1: "Debounce ô Search — tối ưu UI State thực chiến",
+            sub: "Search input gọi API mỗi lần gõ chữ là lỗi thực chiến phổ biến nhất của dev mới vào state.",
+            why: "Không debounce → mỗi ký tự gõ là 1 request — gõ 5 chữ ra 5 request, phần lớn bị hủy giữa đường (race condition, kết quả cũ đè kết quả mới lên UI).",
+            flow: [
+              "User gõ mỗi phím → state <code>query</code> đổi ngay (UI vẫn mượt)",
+              "Không gọi API ngay — đặt hẹn giờ (<code>setTimeout</code> ~300-500ms)",
+              "Gõ tiếp trước khi hẹn giờ chạy → hủy timer cũ, đặt lại từ đầu",
+              "Ngừng gõ đủ lâu → timer chạy hết → mới thực sự set giá trị để fetch API",
+            ],
+            code: {
+              lang: "jsx",
+              label: "useDebouncedValue.js",
+              content: `function useDebouncedValue(value, delay = 400) {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const id = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(id); // huỷ timer cũ mỗi khi value đổi
+  }, [value, delay]);
+  return debounced;
+}
+// const debouncedQuery = useDebouncedValue(query, 400);
+// useEffect(() => { fetchResults(debouncedQuery); }, [debouncedQuery]);`,
+            },
+            nuance: [
+              'Debounce khác Throttle: debounce chờ "ngừng" hành động; throttle giới hạn tần suất chạy dù vẫn đang hành động (dùng cho scroll/resize)',
+              "Input hiển thị (<code>query</code>) vẫn update tức thì — chỉ giá trị dùng để fetch API bị trễ có chủ đích",
+            ],
+            qa: {
+              q: "Task yêu cầu debounce ô search nhưng lead cấm thêm lodash (dependency mới), chỉ cho dùng React hook thuần, làm sao?",
+              a: "Tự viết bằng useEffect + setTimeout như code bên trên: mỗi lần query đổi, đặt 1 timer trễ 300-500ms trước khi set giá trị debounced thật để fetch; effect cleanup (return () => clearTimeout(id)) tự hủy timer cũ mỗi khi query đổi tiếp — đúng bản chất debounce chỉ trong ~8 dòng, không cần thêm dependency.",
+            },
+          },
+        },
+
+        {
+          type: "topic",
+          badge: "03",
+          title: "Responsive",
+          data: {
+            kicker: "Component Foundations",
+            h1: "Responsive — breakpoint, mobile-first, có ý định",
+            sub: "Cùng nội dung, khác bố cục theo không gian — có quy tắc, đo được, review được.",
+            why: "Một mockup desktop không đủ — điện thoại mở lên chữ tràn, cột kép bóp, phải scroll ngang.",
+            key: [
+              '<b>Breakpoint</b>: ngưỡng width tại đó CSS đổi luật layout — giải thích được, không copy số "thần thánh"',
+              "<b>Mobile-first</b>: base = màn hẹp, mở rộng bằng <code>min-width</code>",
+              "4 chiến lược (thuật ngữ ngành — Ethan Marcotte): Fixed / Fluid / Adaptive / <b>Responsive</b>",
+            ],
+            compare: {
+              head: ["Kỹ thuật", "Đổi layout theo", "Khi dùng"],
+              rows: [
+                [
+                  "Media Query",
+                  "Kích thước viewport (màn hình)",
+                  "Layout tổng thể của trang",
+                ],
+                [
+                  "Container Query",
+                  "Kích thước phần tử cha chứa nó",
+                  "Component dùng lại ở nhiều nơi (sidebar hẹp / main rộng) cần tự đổi layout",
+                ],
+              ],
+            },
+            nuance: [
+              "<code>%</code> cố định không phải responsive có ý định — cần đổi số cột, không chỉ giảm font",
+              'Không ẩn nội dung/CTA quan trọng trên mobile chỉ vì "chật" — Clarify trước khi giấu',
+            ],
+            code: {
+              lang: "css",
+              label: "mobile-first.css",
+              content: `.toolbar { display: flex; flex-wrap: wrap; gap: 8px; }
+@media (min-width: 640px) {
+  .project-grid { grid-template-columns: 1fr 1fr; }
+}`,
+            },
+            qa: {
+              q: "Cùng 1 Card component được nhúng cả ở sidebar hẹp và main content rộng, muốn nó tự đổi layout theo đúng chỗ nó nằm — không phải theo màn hình — mà không muốn viết class biến thể riêng cho từng nơi dùng, làm sao?",
+              a: "Dùng Container Query (đã đủ hỗ trợ trình duyệt hiện đại): khai báo container-type: inline-size trên phần tử cha bọc Card, rồi viết @container (min-width: 360px) {...} ngay trong CSS của Card — component tự đổi layout theo container chứa nó, không cần biết đang nằm ở sidebar hay main.",
+            },
+          },
+        },
+
+        {
+          type: "topic",
+          badge: "04",
+          title: "Accessibility",
+          data: {
+            kicker: "Component Foundations",
+            h1: "Accessibility — keyboard, focus, native trước ARIA",
+            sub: "Cùng một UI, nhiều cách tương tác vẫn hiểu được. ARIA là lớp bổ sung — không thay HTML đúng.",
+            why: "Nếu control chỉ <code>div</code>+<code>onClick</code>: Tab không tới, Enter/Space không kích hoạt, screen reader không biết là nút.",
+            key: [
+              "<b>Native-first</b>: <code>button</code>/<code>a</code>/<code>input</code>+<code>label</code> trước khi nghĩ tới ARIA (First Rule of ARIA)",
+              "<b>Focus order & visible focus</b>: không <code>outline:none</code> mà không thay bằng <code>:focus-visible</code>; không positive <code>tabindex</code>",
+              'ARIA chỉ khi HTML chưa đủ — không dùng để "che" markup sai',
+            ],
+            keyTable: {
+              head: ["WCAG", "Ý nghĩa", "Liên quan trực tiếp"],
+              rows: [
+                [
+                  "A",
+                  "Tối thiểu — thiếu là chặn hoàn toàn",
+                  "alt, label, dùng bàn phím được",
+                ],
+                [
+                  "AA",
+                  "Chuẩn — luật/tổ chức thường yêu cầu",
+                  "Focus nhìn thấy, thứ tự Tab hợp lý",
+                ],
+                [
+                  "AAA",
+                  "Cao nhất — hiếm khi bắt buộc toàn site",
+                  "Biết tồn tại là đủ",
+                ],
+              ],
+            },
+            sides: {
+              bad: {
+                label: "Tự dựng, tự gánh hậu quả",
+                code: {
+                  lang: "jsx",
+                  label: "phải tự lo focus/keyboard",
+                  content: `<div role="button" tabIndex={0}
+     onClick={save} onKeyDown={onKey}>
+  Lưu
+</div>`,
+                },
+                items: [
+                  "Phải tự lo focus, keyboard, disabled…",
+                  "Dễ sót — chi phí cao hơn vẻ ngoài",
+                ],
+              },
+              good: {
+                label: "Native — mọi thứ có sẵn",
+                code: {
+                  lang: "jsx",
+                  label: "Tab/Enter/Space tự động đúng",
+                  content: `<button type="button" onClick={save}>
+  Lưu
+</button>`,
+                },
+                items: [
+                  "Tab, Enter/Space, disabled đều mặc định đúng",
+                  "Screen reader tự biết đây là nút",
+                ],
+              },
+            },
+            flow: [
+              "Mở modal → focus phần tử đầu tiên trong modal",
+              "Tab tuần tự trong modal",
+              "Tab tại phần tử cuối → quay lại phần tử đầu (trap)",
+              "Esc → đóng modal, trả focus về nơi đã mở modal",
+            ],
+            caseTitle: "Case study (thực tế ngành)",
+            caseText:
+              "National Federation of the Blind kiện Target Corporation (2006) vì target.com không dùng được với screen reader — dàn xếp 6 triệu USD (2008), một trong các cột mốc khiến a11y thành yêu cầu tuân thủ, không phải tính năng phụ.",
+            qa: {
+              q: "Modal cho phép Tab nhảy ra khỏi modal ra nền phía sau (focus leak), nhưng lead cấm thêm dependency mới (focus-trap-react), làm sao?",
+              a: "Tự bắt sự kiện keydown Tab trong modal: lấy danh sách phần tử focusable (querySelectorAll các selector như button, a[href], input, [tabindex]) — khi Tab ở phần tử cuối thì focus quay lại phần tử đầu, Shift+Tab ở phần tử đầu thì focus nhảy tới phần tử cuối. Khoảng 15-20 dòng JS thuần, không cần thêm dependency (đúng thứ tự flow bên trên).",
+            },
+          },
+        },
+
+        {
+          type: "topic",
+          badge: "05",
+          title: "CSR vs SSR",
+          data: {
+            kicker: "Component Foundations",
+            h1: "CSR vs SSR — hiểu mô hình render",
+            sub: 'Không phải CSR "cũ"/SSR "mới" — mà ai render HTML lần đầu: trình duyệt hay server.',
+            why: "Chọn sai → landing không SEO, hoặc dashboard bị ép SSR không cần thiết. Chọn theo màn hình, không theo trend.",
+            figure: {
+              caption:
+                "CSR: nội dung xuất hiện sau khi tải+chạy JS. SSR: nội dung có sẵn sớm hơn, JS hydrate sau để thêm tương tác.",
+              svg: `<svg viewBox="0 0 380 150" xmlns="http://www.w3.org/2000/svg">
+      <text x="10" y="20" font-size="11" fill="var(--text)" font-weight="700">CSR</text>
+      <rect x="10" y="28" width="60" height="20" fill="var(--panel-2)" stroke="var(--border)"/>
+      <rect x="70" y="28" width="140" height="20" fill="var(--warn-soft)" stroke="var(--warn)"/>
+      <rect x="210" y="28" width="150" height="20" fill="var(--ok-soft)" stroke="var(--ok)"/>
+      <text x="20" y="42" font-size="9" fill="var(--text-dim)">Shell</text>
+      <text x="95" y="42" font-size="9" fill="var(--warn)">Tải JS + fetch</text>
+      <text x="245" y="42" font-size="9" fill="var(--ok)">Nội dung + tương tác</text>
+
+      <text x="10" y="85" font-size="11" fill="var(--text)" font-weight="700">SSR</text>
+      <rect x="10" y="93" width="60" height="20" fill="var(--panel-2)" stroke="var(--border)"/>
+      <rect x="70" y="93" width="60" height="20" fill="var(--info-soft)" stroke="var(--info)"/>
+      <rect x="130" y="93" width="90" height="20" fill="var(--ok-soft)" stroke="var(--ok)"/>
+      <rect x="220" y="93" width="140" height="20" fill="var(--ok-soft)" stroke="var(--ok)" stroke-dasharray="3,3"/>
+      <text x="20" y="107" font-size="9" fill="var(--text-dim)">Request</text>
+      <text x="75" y="107" font-size="9" fill="var(--info)">Render server</text>
+      <text x="138" y="107" font-size="9" fill="var(--ok)">Nội dung</text>
+      <text x="228" y="107" font-size="9" fill="var(--ok)">Hydrate → tương tác</text>
+
+      <line x1="210" y1="20" x2="210" y2="130" stroke="var(--text-faint)" stroke-dasharray="2,3"/>
+      <text x="213" y="140" font-size="8.5" fill="var(--text-faint)">mốc "nội dung hiện" — SSR tới sớm hơn CSR</text>
+    </svg>`,
+            },
+            keyTable: {
+              head: ["Mô hình", "HTML render lúc nào", "Hợp với"],
+              rows: [
+                [
+                  "CSR",
+                  "Trên máy user, sau khi JS tải + fetch",
+                  "Dashboard, admin, tool nội bộ",
+                ],
+                [
+                  "SSR",
+                  "Trên server, mỗi request",
+                  "Cá nhân hóa nhưng vẫn cần SEO",
+                ],
+                [
+                  "SSG",
+                  "Trên server, một lần lúc build",
+                  "Blog, docs, landing ít đổi",
+                ],
+                [
+                  "ISR",
+                  "Như SSG, tự build lại theo lịch (Next.js)",
+                  "Trang sản phẩm đổi giá/tồn theo giờ",
+                ],
+              ],
+            },
+            nuance: [
+              'SPA không phải "luôn xấu SEO" — có prerender/SSR bridge; hiểu vấn đề, không dogma',
+              "CSR vẫn có server (API) — khác biệt là server không trả UI HTML đủ cho request đầu tiên",
+            ],
+            caseTitle: "Case study — cả hai chiều đều có thật",
+            caseText:
+              "Airbnb công khai chia sẻ hệ thống Hypernova (2016) — server-render React để trang có nội dung ngay, ưu tiên SEO. Netflix (2017) lại gỡ bớt React khỏi landing cho TV/thiết bị yếu để giảm JS phải tải. Cùng logic: chọn theo đặc điểm của màn đó.",
+            qa: {
+              q: "Dự án chỉ là SPA thuần (Vite/CRA), không có budget/thời gian refactor sang Next.js hay framework SSR, nhưng vẫn cần vài trang public được Google index đúng nội dung và Facebook/LinkedIn share ra preview đúng, làm sao?",
+              a: "Không cần đổi cả kiến trúc — chỉ cần 'prerender' tĩnh cho đúng vài route public đó: chạy 1 script build-time (Puppeteer hoặc vite-plugin-ssg) mở từng route, đợi render xong rồi lưu ra file HTML tĩnh kèm đúng meta/Open Graph tags theo route (qua react-helmet) — deploy các file HTML này cạnh SPA. Google/Facebook bot đọc được HTML tĩnh đầy đủ, còn user thật vẫn load đúng SPA CSR như cũ.",
+            },
+          },
+        },
+
+        {
+          type: "topic",
+          badge: "06",
+          title: "AI Structure Review",
+          data: {
+            kicker: "AI Fluency",
+            h1: 'AI Structure Review — đọc <span style="color:var(--accent)">cấu trúc</span> AI sinh, không chỉ đọc cú pháp',
+            sub: "Review bề mặt (thiếu label, alt) lộ ngay khi Tab. Review cấu trúc khó hơn một tầng: AI sinh component chạy được, cú pháp sạch, style đẹp — nhưng kiến trúc bên trong sai, chỉ lộ khi đọc code như đọc code một đồng nghiệp.",
+            why: "Hallucination trong code không chỉ là AI bịa thông tin — nó có 2 dạng nguy hiểm khác nhau, và dạng khó thấy hơn mới là dạng đáng sợ.",
+            compare: {
+              head: ["Dạng hallucination", "Biểu hiện", "Vì sao nguy hiểm"],
+              rows: [
+                [
+                  '"Ồn" (loud)',
+                  "Gọi hook/API/import không tồn tại (<code>useSyncedProfile()</code>…)",
+                  "Build/runtime báo lỗi ngay — dễ bắt nếu <b>chạy thử</b>, không chỉ đọc mắt",
+                ],
+                [
+                  '"Im" (silent)',
+                  "Prop truyền xuống nhưng không ai dùng; hook đúng tên nhưng sai hợp đồng",
+                  'Chạy vẫn được, UI vẫn "trông đúng" — chỉ lộ khi đọc kỹ luồng props',
+                ],
+              ],
+            },
+            key: [
+              "<b>Trách nhiệm:</b> component kể được <i>một câu</i> nó làm gì, hay đang gánh fetch + render + tính toán + modal?",
+              '<b>Props "chuyển hộ":</b> có prop đi qua ≥2 tầng mà tầng giữa không dùng, chỉ bắn tiếp?',
+              "<b>Hook/API có thật:</b> grep tên — có tồn tại trong codebase/thư viện đang dùng, hay AI tự đặt tên nghe hợp lý?",
+              "<b>Naming có nói lên bản chất:</b> <code>data</code>, <code>obj</code>, <code>Wrapper2</code> là dấu hiệu AI đặt tên tạm.",
+              '<b>Component "rỗng":</b> file chỉ <code>return children</code> hoặc bọc 1 <code>div</code> không lý do.',
+            ],
+            code: {
+              lang: "jsx",
+              label: 'before.html — PR "do AI viết" (giả lập, có 3 lớp lỗi)',
+              content: `function SidebarIcon({ theme, icon }) {
+  // theme không hề được dùng ở đây — chỉ "chuyển hộ"
+  return <span>{icon === "home" ? "🏠" : "📁"}</span>;
+}
+function SidebarWrapper({ children }) {
+  // component rỗng — chỉ bọc children, không thêm gì
+  return <>{children}</>;
+}
+function Dashboard() {
+  // hook nghe hợp lý nhưng KHÔNG tồn tại — build sẽ lỗi ngay
+  const profile = useSyncedProfile();
+  ...
+}`,
+            },
+            nuance: [
+              '"Chạy được + comment nghe hợp lý" không phải bằng chứng kiến trúc đúng — AI viết comment rất thuyết phục cho quyết định sai.',
+              "Cú pháp sai → editor/build la ngay. Kiến trúc sai (props drilling giả, boundary lệch) → vẫn xanh, vẫn chạy — chỉ người đọc hiểu mới thấy.",
+              "Nghi ngờ một hook/API lạ → đừng đoán, hãy <b>chạy thử</b> để xác nhận trước khi kết luận hallucination.",
+            ],
+            qa: {
+              q: "Team không có quyền/budget cài thêm static-analysis tool riêng để tự động bắt hallucination trong PR do AI viết, làm sao vẫn kiểm soát được bằng tay?",
+              a: 'Không cần tool: (1) luôn build/chạy thử trước khi đọc kỹ — bắt ngay hallucination "ồn"; (2) grep tên mọi hook/import lạ trong codebase trước khi tin nó tồn tại; (3) tự vẽ lại luồng props cha→con trên giấy — nếu vẽ không ra vì một prop "biến mất" giữa đường, đó chính là hallucination "im". Cả 3 bước đều miễn phí, chỉ cần kỷ luật đọc code trước khi approve.',
+            },
+          },
+        },
+
+        {
+          type: "topic",
+          badge: "07",
+          title: "Proactive Clarify",
+          data: {
+            kicker: "Requirement Thinking",
+            h1: 'Proactive Clarify — tự hỏi trước cả khi brief <span style="color:var(--accent)">tưởng như</span> đủ rõ',
+            sub: "Clarify cơ bản hỏi khi <i>thấy</i> mơ hồ — phản xạ bị động. Bước tiếp theo: <i>chủ động</i> đi tìm mơ hồ trước khi vấp phải nó.",
+            why: "Component/state/layout kéo theo nhiều quyết định ẩn (ranh giới cắt, ai giữ state, breakpoint nào) mà brief hiếm khi nói rõ hết — chờ vấp phải mới hỏi là quá muộn.",
+            keyTable: {
+              head: ["Chủ đề", "Câu hỏi chủ động cần tự đặt ra"],
+              rows: [
+                [
+                  "Component boundary",
+                  "Component này dùng lại ở đâu khác không? Cắt ranh giới nào cho hợp cả 2 nơi?",
+                ],
+                [
+                  "State ownership",
+                  "Dữ liệu này cần giữ qua reload/route khác không, hay chỉ sống trong 1 lần xem?",
+                ],
+                [
+                  "Responsive",
+                  "Brief không nói mobile — mặc định phải responsive, hay chỉ desktop trước?",
+                ],
+                [
+                  "Accessibility",
+                  "Control mới này có cần đúng chuẩn Tab/focus như phần còn lại của app không?",
+                ],
+                [
+                  "Render model",
+                  "Màn này thuộc vùng public (cần SEO) hay sau login (không cần)?",
+                ],
+              ],
+            },
+            flow: [
+              "Tự Clarify trước (2–3 câu, chưa hỏi AI)",
+              "Đưa brief cho AI, xin gợi ý câu hỏi Clarify",
+              "Đọc danh sách AI trả về (thường dài, có câu lan man)",
+              "Tự lọc: giữ/bỏ — kèm lý do, không chép nguyên",
+            ],
+            nuance: [
+              "Chủ động ≠ hỏi nhiều hơn — mục tiêu là hỏi <b>đúng lúc</b> (trước khi code), không phải tăng số câu hỏi.",
+              'Câu hỏi AI gợi ý mang tính "chung"; câu hỏi tự nghĩ từ bối cảnh thật (đọc code hiện tại, biết màn kia thiếu gì) luôn giá trị hơn.',
+              "Chuyển tiếp toàn bộ câu hỏi AI cho PM mà không lọc = để AI Clarify hộ — mất giá trị của kỹ năng này.",
+            ],
+            caseTitle: "Use case — ProjectCard dùng lại cho Admin & User",
+            caseText:
+              'Brief: "Tách ProjectCard thành component tái sử dụng cho cả Admin và User, đảm bảo responsive." Tự Clarify trước: Admin/User hiển thị cùng thông tin, hay Admin cần thêm action (xoá/duyệt) mà User không có? Không hỏi boundary này trước → code xong mới nhận ra Admin cần nút mà ProjectCard không có props cho việc đó — phải sửa lại component đã "tưởng xong".',
+            qa: {
+              q: "PM/designer bận, brief chỉ gửi qua chat 1 dòng, không có thời gian hồi đáp nhiều câu hỏi cùng lúc — làm sao chủ động Clarify mà không làm phiền/block họ?",
+              a: 'Gom lại tối đa 2–3 câu hỏi quan trọng nhất (đã lọc từ bước AI gợi ý), mỗi câu kèm sẵn giả định mặc định: "Mình hiểu Admin không cần thêm action gì khác User — nếu không nghe phản hồi trước chiều nay mình làm theo hướng này." Vẫn là Clarify chủ động có bằng chứng, nhưng giảm tải cho người trả lời — họ chỉ cần phản đối nếu giả định sai, không cần trả lời đầy đủ từng câu.',
+            },
+          },
+        },
+
+        {
+          type: "closing",
+          badge: "End",
+          title: "Demo & Kết",
+          data: {
+            kicker: "Demo tích hợp",
+            h1: "Filterable Projects List — Vite + React",
+            sub: "Một mini app kết nối component, state, responsive và accessibility tối thiểu.",
+            key: [
+              "<b>Component Architecture</b>: SearchBar / StarredFilter / ProjectCard / ProjectList / ProjectsPage",
+              "<b>UI State</b>: <code>query</code> + <code>starredOnly</code> lift lên <code>ProjectsPage</code>, <code>filtered</code> qua <code>useMemo</code>",
+              "<b>Responsive</b>: grid 1 cột mobile → 2 cột từ 640px",
+              "<b>Accessibility</b>: input có <code>label</code>, button đúng <code>type</code>, <code>:focus-visible</code> thay <code>outline:none</code>",
+            ],
+            code: {
+              lang: "bash",
+              label: "chạy demo",
+              content: `cd 02_Demos/05-j2-component-foundations
+npm install
+npm run dev`,
+            },
+            nextTitle: "Checklist trước khi merge",
+            next: [
+              "Tự hỏi lại câu hỏi bỏ túi tương ứng chủ đề vừa chạm tới.",
+              'Khi AI sinh code: chạy thử trước, rồi đọc cấu trúc (props, boundary, hook) — đừng dừng ở "nhìn được".',
+              "Khi brief mơ hồ: Clarify chủ động trước, dùng AI gợi ý câu hỏi rồi tự lọc giữ/bỏ.",
+            ],
+          },
+        },
+      ];
+
+      /* ---------------- render engine ---------------- */
+      let current = 0;
+      let scale = 1;
+
+      const sideEl = document.getElementById("side");
+      const contentEl = document.getElementById("content");
+      const countLabel = document.getElementById("countLabel");
+      const progressBar = document.getElementById("progressBar");
+
+      function pad(n) {
+        return n < 10 ? "0" + n : "" + n;
+      }
+      function esc(s) {
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      function renderSide() {
+        sideEl.innerHTML = "";
+        slides.forEach((s, i) => {
+          const row = document.createElement("div");
+          row.className = "side-row" + (i === current ? " active" : "");
+          row.innerHTML =
+            '<span class="side-badge">' +
+            s.badge +
+            "</span><span>" +
+            s.title +
+            "</span>";
+          row.addEventListener("click", () => {
+            current = i;
+            render();
+          });
+          sideEl.appendChild(row);
+          if (s.sepAfter) {
+            const sep = document.createElement("div");
+            sep.className = "side-sep";
+            sideEl.appendChild(sep);
+          }
+        });
+      }
+
+      function cardHTML(cls, headText, bodyHTML) {
+        return (
+          '<div class="card ' +
+          cls +
+          '"><div class="card-head"><span class="bar"></span>' +
+          headText +
+          "</div>" +
+          bodyHTML +
+          "</div>"
+        );
+      }
+
+      function listHTML(items) {
+        return (
+          "<ul>" + items.map((t) => "<li>" + t + "</li>").join("") + "</ul>"
+        );
+      }
+
+      function codeHTML(code) {
+        if (!code) return "";
+        return (
+          '<div class="code-block"><div class="code-label">' +
+          esc(code.label) +
+          "</div><pre><code>" +
+          esc(code.content) +
+          "</code></pre></div>"
+        );
+      }
+
+      function tableHTML(t) {
+        if (!t) return "";
+        let html =
+          '<table class="mini-table"><thead><tr>' +
+          t.head.map((h) => "<th>" + h + "</th>").join("") +
+          "</tr></thead><tbody>";
+        t.rows.forEach((r) => {
+          html +=
+            "<tr>" + r.map((c) => "<td>" + c + "</td>").join("") + "</tr>";
+        });
+        html += "</tbody></table>";
+        return html;
+      }
+
+      function flowHTML(steps) {
+        let html = '<div class="flow">';
+        steps.forEach((s, i) => {
+          html +=
+            '<div class="flow-step"><span class="idx">' +
+            (i + 1) +
+            "</span><span>" +
+            s +
+            "</span></div>";
+          if (i < steps.length - 1) html += '<div class="flow-arrow">→</div>';
+        });
+        html += "</div>";
+        return html;
+      }
+
+      function figureHTML(fig) {
+        let html = '<div class="figure-body">' + fig.svg;
+        if (fig.caption)
+          html += '<p class="figure-caption">' + fig.caption + "</p>";
+        html += "</div>";
+        return html;
+      }
+
+      function qaHTML(qa) {
+        return (
+          "<p><b>Tình huống:</b> " +
+          qa.q +
+          '</p><p style="margin-top:8px"><b>Hướng giải:</b> ' +
+          qa.a +
+          "</p>"
+        );
+      }
+
+      function sideHTML(side, kind) {
+        const icon = kind === "bad" ? "✕" : "✓";
+        let html =
+          '<div class="pane ' +
+          kind +
+          '"><div class="hd">' +
+          icon +
+          " " +
+          side.label +
+          "</div>";
+        if (side.items) html += listHTML(side.items);
+        if (side.code) html += codeHTML(side.code);
+        html += "</div>";
+        return html;
+      }
+
+      function sidesHTML(sides) {
+        return (
+          '<div class="sides">' +
+          sideHTML(sides.bad, "bad") +
+          sideHTML(sides.good, "good") +
+          "</div>"
+        );
+      }
+
+      function renderContent() {
+        const s = slides[current];
+        const d = s.data;
+        let html = "";
+
+        if (s.type === "cover") {
+          html += '<div class="cover">';
+          html += '<div class="kicker">' + d.kicker + "</div>";
+          html += "<h1>" + d.h1 + "</h1>";
+          html += '<p class="lead">' + d.lead + "</p>";
+          html += listHTML(d.bullets);
+          html += "</div>";
+        } else if (s.type === "board") {
+          html += '<div class="kicker">' + d.kicker + "</div>";
+          html += '<h1 class="slide-title">' + d.h1 + "</h1>";
+          html += '<p class="slide-sub">' + d.sub + "</p>";
+          html += '<div class="board-grid">';
+          d.cols.forEach((col) => {
+            html += '<div class="board-col"><h3>' + col.title + "</h3>";
+            col.items.forEach(([num, label, status]) => {
+              html +=
+                '<div class="board-item"><span class="num">' +
+                num +
+                "</span><span>" +
+                label +
+                '</span><span class="status ' +
+                status +
+                '">' +
+                (status === "done" ? "✓ Done" : "⬜ Pending") +
+                "</span></div>";
+            });
+            html += "</div>";
+          });
+          html += "</div>";
+        } else if (s.type === "topic" || s.type === "closing") {
+          html +=
+            '<div class="content-head"><div class="kicker">' +
+            d.kicker +
+            "</div></div>";
+          html += '<h1 class="slide-title">' + d.h1 + "</h1>";
+          html += '<p class="slide-sub">' + d.sub + "</p>";
+          html += '<div class="cards">';
+          if (d.why)
+            html += cardHTML("why", "Bản chất", "<p>" + d.why + "</p>");
+          if (d.sides)
+            html += cardHTML(
+              "compare",
+              "So sánh trực quan",
+              sidesHTML(d.sides),
+            );
+          if (d.key)
+            html += cardHTML("key", "Kiến thức chính", listHTML(d.key));
+          if (d.keyTable)
+            html += cardHTML(
+              "key",
+              "Mô hình / phân loại",
+              tableHTML(d.keyTable),
+            );
+          if (d.bigTable)
+            html += cardHTML(
+              "key",
+              "Toàn cảnh — một câu hỏi bỏ túi mỗi chủ đề",
+              tableHTML(d.bigTable),
+            );
+          if (d.compare)
+            html += cardHTML(
+              "compare",
+              "So sánh lựa chọn",
+              tableHTML(d.compare),
+            );
+          if (d.nuance)
+            html += cardHTML("nuance", "Nuance dễ nhầm", listHTML(d.nuance));
+          if (d.figure)
+            html += cardHTML("figure", "Minh họa", figureHTML(d.figure));
+          if (d.flow)
+            html += cardHTML("flowcard", "Flow / quy trình", flowHTML(d.flow));
+          if (d.code) html += cardHTML("key", "Ví dụ", codeHTML(d.code));
+          if (d.caseText)
+            html += cardHTML(
+              "case",
+              d.caseTitle || "Case study",
+              "<p>" + d.caseText + "</p>",
+            );
+          if (d.qa)
+            html += cardHTML(
+              "qa",
+              'Case thực tế — "nếu không có / không được ___ thì sao?"',
+              qaHTML(d.qa),
+            );
+          if (d.next)
+            html += cardHTML(
+              "nuance",
+              d.nextTitle || "Tiếp theo",
+              listHTML(d.next),
+            );
+          html += "</div>";
+        }
+
+        contentEl.innerHTML = html;
+      }
+
+      function render() {
+        renderSide();
+        renderContent();
+        countLabel.textContent = pad(current + 1) + " / " + slides.length;
+        progressBar.style.width = ((current + 1) / slides.length) * 100 + "%";
+        document.getElementById("prevBtn").disabled = current === 0;
+        document.getElementById("nextBtn").disabled =
+          current === slides.length - 1;
+        window.scrollTo({ top: 0 });
+      }
+
+      document.getElementById("prevBtn").addEventListener("click", () => {
+        if (current > 0) {
+          current--;
+          render();
+        }
+      });
+      document.getElementById("nextBtn").addEventListener("click", () => {
+        if (current < slides.length - 1) {
+          current++;
+          render();
+        }
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" && current < slides.length - 1) {
+          current++;
+          render();
+        }
+        if (e.key === "ArrowLeft" && current > 0) {
+          current--;
+          render();
+        }
+      });
+
+      document.getElementById("fontMinus").addEventListener("click", () => {
+        scale = Math.max(0.85, scale - 0.1);
+        document.documentElement.style.setProperty("--scale", scale);
+      });
+      document.getElementById("fontPlus").addEventListener("click", () => {
+        scale = Math.min(1.35, scale + 0.1);
+        document.documentElement.style.setProperty("--scale", scale);
+      });
+      document.getElementById("themeToggle").addEventListener("click", () => {
+        document.documentElement.classList.toggle("dark");
+      });
+
+      /* Sidebar separators */
+      slides.forEach((s) => {
+        if (s.badge === "Cheat" || s.badge === "02") s.sepAfter = true;
+      });
+
+      render();
+    </script>
+  </body>
+</html>

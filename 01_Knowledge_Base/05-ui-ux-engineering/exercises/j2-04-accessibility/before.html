@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accessibility · before</title>
+    <style>
+      :root {
+        --bg: #f6f4ef;
+        --surface: #fffdf8;
+        --ink: #1c1917;
+        --muted: #57534e;
+        --line: #e7e5e4;
+        --accent: #0f766e;
+        --warn: #9a3412;
+        --warn-bg: #ffedd5;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      /* BEFORE: giấu outline — keyboard mất vị trí */
+      *:focus {
+        outline: none;
+      }
+      body {
+        margin: 0;
+        font-family: system-ui, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        line-height: 1.5;
+      }
+      .banner {
+        max-width: 40rem;
+        margin: 1rem auto 0;
+        padding: 0.75rem 1rem;
+        background: var(--warn-bg);
+        color: var(--warn);
+        border-radius: 8px;
+        font-size: 0.9rem;
+      }
+      .wrap {
+        max-width: 40rem;
+        margin: 1rem auto 2rem;
+        padding: 0 1rem;
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 1rem 1.1rem;
+        margin-bottom: 0.85rem;
+      }
+      h1 {
+        margin: 0 0 0.75rem;
+        font-size: 1.25rem;
+      }
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+      }
+      .chip,
+      .icon-btn,
+      .cta {
+        display: inline-block;
+        padding: 0.4rem 0.75rem;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: #fff;
+        cursor: pointer;
+        user-select: none;
+      }
+      .cta {
+        background: var(--ink);
+        color: #fff;
+        border-color: var(--ink);
+      }
+      .icon-btn {
+        width: 2.25rem;
+        text-align: center;
+        padding-left: 0;
+        padding-right: 0;
+      }
+      .field {
+        margin: 0.75rem 0;
+      }
+      .field input {
+        width: 100%;
+        font: inherit;
+        padding: 0.45rem 0.6rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+      .hint {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      BEFORE — cố ý lỗi a11y. KHÔNG sửa.
+      Thử Tab / Shift+Tab / Enter — rồi sửa ở index.html.
+    -->
+    <div class="banner">
+      <strong>before</strong> — audit bàn phím rồi sửa ở
+      <code>index.html</code>. Ghi findings vào <code>audit.md</code>.
+    </div>
+
+    <div class="wrap">
+      <main class="card">
+        <h1>Projects</h1>
+
+        <div class="toolbar">
+          <!-- div giả nút — không Tab tới -->
+          <div class="chip" onclick="alert('all')">All</div>
+          <div class="chip" onclick="alert('starred')">Starred</div>
+          <!-- positive tabindex — phá thứ tự -->
+          <div
+            class="cta"
+            tabindex="2"
+            onclick="alert('create')"
+            role="button"
+            aria-label="Create"
+          >
+            Tạo mới
+          </div>
+          <!-- icon-only thiếu tên; tabindex kỳ lạ -->
+          <div
+            class="icon-btn"
+            tabindex="1"
+            onclick="alert('settings')"
+            aria-hidden="true"
+          >
+            ⚙️
+          </div>
+        </div>
+
+        <div class="field">
+          <!-- thiếu label -->
+          <input type="search" placeholder="Tìm dự án…" />
+        </div>
+
+        <p class="hint">
+          Gõ Tab: có thứ tự lạ? Có control chuột được nhưng bàn phím bỏ qua?
+          Focus có thấy không?
+        </p>
+
+        <div
+          class="cta"
+          style="margin-top: 0.75rem"
+          onclick="location.hash = 'portal'"
+        >
+          Về Portal
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
