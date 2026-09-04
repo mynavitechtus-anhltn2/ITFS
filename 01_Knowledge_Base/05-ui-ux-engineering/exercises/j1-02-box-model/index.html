@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>J1-02a · Box Model (bài làm)</title>
+    <style>
+      :root {
+        --bg: #f6f4ef;
+        --ink: #1c1917;
+        --muted: #57534e;
+        --line: #e7e5e4;
+        --accent: #0f766e;
+        --warn: #9a3412;
+        --warn-bg: #ffedd5;
+      }
+      * {
+        box-sizing: content-box; /* cố ý — trước khi sửa */
+      }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        line-height: 1.5;
+      }
+      .wrap {
+        max-width: 56rem;
+        margin: 0 auto;
+        padding: 1.25rem;
+      }
+      .banner {
+        font-size: 0.9rem;
+        color: var(--warn);
+        background: var(--warn-bg);
+        border: 1px solid #fed7aa;
+        border-radius: 8px;
+        padding: 0.75rem 0.9rem;
+        margin-bottom: 1rem;
+      }
+      h1 {
+        font-size: 1.2rem;
+        margin: 0 0 0.35rem;
+      }
+      .hint {
+        color: var(--muted);
+        font-size: 0.92rem;
+        margin: 0 0 1rem;
+      }
+      /* TODO (ở index): container dùng gap 16px; con border-box width 200 */
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .box {
+        width: 200px;
+        padding: 16px;
+        border: 2px solid var(--accent);
+        background: #fffdf8;
+        margin-right: 8px;
+        margin-bottom: 24px;
+      }
+      .box strong {
+        display: block;
+        margin-bottom: 0.35rem;
+      }
+      .box span {
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      BÀI LÀM — sửa CSS tại đây.
+      Đề: README.md · Reset: cp before.html index.html
+      Clarify:
+      1.
+      2.
+      3.
+    -->
+    <div class="wrap">
+      <div class="banner">
+        <strong>index.html</strong> — bài làm. Spec: outer 200px · padding 16 · border 2 · gap
+        16 · <code>border-box</code>. So với <code>before.html</code> sau khi xong.
+      </div>
+      <h1>Inspect: 4 hộp cạnh nhau</h1>
+      <p class="hint">
+        Spec đích: outer width 200px · padding 16 · border 2 · cách nhau 16 ·
+        <code>border-box</code>. Hiện tại dùng <code>content-box</code> + khoảng cách không đều.
+      </p>
+      <div class="row">
+        <div class="box">
+          <strong>Box A</strong>
+          <span>width: 200 + padding + border → phình?</span>
+        </div>
+        <div class="box">
+          <strong>Box B</strong>
+          <span>Đo outer trong DevTools.</span>
+        </div>
+        <div class="box">
+          <strong>Box C</strong>
+          <span>Margin giữa hộp đang lệch 8 / 24.</span>
+        </div>
+        <div class="box">
+          <strong>Box D</strong>
+          <span>Sửa thành gap đều 16px.</span>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

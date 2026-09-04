@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>J1-02b · Flex & Grid (bài làm)</title>
+    <style>
+      :root {
+        --bg: #f6f4ef;
+        --surface: #fffdf8;
+        --ink: #1c1917;
+        --muted: #57534e;
+        --line: #e7e5e4;
+        --accent: #0f766e;
+        --warn: #9a3412;
+        --warn-bg: #ffedd5;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        line-height: 1.5;
+      }
+      .wrap {
+        max-width: 52rem;
+        margin: 0 auto;
+        padding: 1.25rem;
+      }
+      .banner {
+        font-size: 0.9rem;
+        color: var(--warn);
+        background: var(--warn-bg);
+        border: 1px solid #fed7aa;
+        border-radius: 8px;
+        padding: 0.75rem 0.9rem;
+        margin-bottom: 1rem;
+      }
+      /* BEFORE: toolbar xếp bằng float — dễ vỡ */
+      .toolbar {
+        overflow: hidden;
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--line);
+      }
+      .toolbar .brand {
+        float: left;
+        font-weight: 700;
+      }
+      .toolbar .actions {
+        float: right;
+      }
+      .toolbar .actions .chip {
+        display: inline-block;
+        margin-left: 8px;
+        padding: 0.35rem 0.65rem;
+        background: var(--ink);
+        color: #fff;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        cursor: pointer;
+      }
+      /* BEFORE: giả 2 cột bằng width % + margin */
+      .list::after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+      .card {
+        float: left;
+        width: 48%;
+        margin-right: 4%;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+      .card:nth-child(even) {
+        margin-right: 0;
+      }
+      .card .title {
+        font-weight: 700;
+        margin-bottom: 0.35rem;
+      }
+      .card .desc {
+        color: var(--muted);
+        font-size: 0.92rem;
+        margin-bottom: 0.75rem;
+      }
+      .card .row-actions .link {
+        color: var(--accent);
+        margin-right: 1rem;
+        cursor: pointer;
+      }
+      .card .row-actions .btn {
+        display: inline-block;
+        padding: 0.35rem 0.65rem;
+        background: var(--ink);
+        color: #fff;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      BÀI LÀM — chuyển float/width% sang Flex + Grid.
+      Đề: README.md · Reset: cp before.html index.html
+      Clarify:
+      1.
+      2.
+      3.
+    -->
+    <div class="wrap">
+      <div class="banner">
+        <strong>index.html</strong> — bài làm. Toolbar → Flex; lưới card → Grid (1 cột /
+        2 cột). Giữ <code>before.html</code> để so sánh.
+      </div>
+
+      <div class="toolbar">
+        <div class="brand">ITFS Projects</div>
+        <div class="actions">
+          <div class="chip" onclick="alert('filter')">Lọc</div>
+          <div class="chip" onclick="alert('new')">Tạo mới</div>
+        </div>
+      </div>
+
+      <div class="list">
+        <div class="card">
+          <div class="title">Portal changelog</div>
+          <div class="desc">Trang tĩnh liệt kê thay đổi nội bộ.</div>
+          <div class="row-actions">
+            <span class="link" onclick="location.hash='c1'">Chi tiết</span>
+            <span class="btn" onclick="alert('star')">Theo dõi</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="title">Profile card</div>
+          <div class="desc">Card hồ sơ — luyện a vs button.</div>
+          <div class="row-actions">
+            <span class="link" onclick="location.hash='c2'">Chi tiết</span>
+            <span class="btn" onclick="alert('star')">Theo dõi</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="title">Box model lab</div>
+          <div class="desc">Đo padding / border trong DevTools.</div>
+          <div class="row-actions">
+            <span class="link" onclick="location.hash='c3'">Chi tiết</span>
+            <span class="btn" onclick="alert('star')">Theo dõi</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="title">Flex grid lab</div>
+          <div class="desc">Một trục vs lưới hai cột.</div>
+          <div class="row-actions">
+            <span class="link" onclick="location.hash='c4'">Chi tiết</span>
+            <span class="btn" onclick="alert('star')">Theo dõi</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

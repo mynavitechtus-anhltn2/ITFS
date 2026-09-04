@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>J1-03 · UI Library (bài làm)</title>
+    <style>
+      :root {
+        --bg: #f6f4ef;
+        --ink: #1c1917;
+        --muted: #57534e;
+        --line: #d6d3d1;
+        --accent: #0f766e;
+        --warn: #9a3412;
+        --warn-bg: #ffedd5;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        line-height: 1.5;
+      }
+      .banner {
+        max-width: 28rem;
+        margin: 1rem auto 0;
+        font-size: 0.9rem;
+        color: var(--warn);
+        background: var(--warn-bg);
+        border: 1px solid #fed7aa;
+        border-radius: 8px;
+        padding: 0.75rem 0.9rem;
+      }
+      /* Homemade — cố ý không dùng Bootstrap */
+      .page {
+        max-width: 28rem;
+        margin: 1.25rem auto 2rem;
+        padding: 0 1rem;
+      }
+      .box {
+        background: #fffdf8;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 1.25rem 1.1rem;
+        box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.06);
+      }
+      .box .heading {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin: 0 0 0.35rem;
+      }
+      .box .sub {
+        color: var(--muted);
+        font-size: 0.92rem;
+        margin: 0 0 1rem;
+      }
+      .field {
+        margin-bottom: 0.85rem;
+      }
+      .field .lbl {
+        display: block;
+        font-size: 0.85rem;
+        margin-bottom: 0.25rem;
+        color: var(--muted);
+      }
+      .field .inp {
+        width: 100%;
+        padding: 0.45rem 0.5rem;
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        font: inherit;
+      }
+      .actions {
+        margin-top: 1rem;
+      }
+      .actions .primary {
+        width: 100%;
+        padding: 0.55rem;
+        border: 0;
+        background: var(--accent);
+        color: #fff;
+        font: inherit;
+        font-weight: 600;
+        border-radius: 2px;
+        cursor: pointer;
+      }
+      .actions .sso {
+        width: 100%;
+        margin-top: 0.5rem;
+        padding: 0.55rem;
+        border: 1px solid var(--line);
+        background: #fff;
+        font: inherit;
+        border-radius: 2px;
+        cursor: pointer;
+      }
+      .actions .forgot {
+        display: inline-block;
+        margin-top: 0.75rem;
+        color: var(--accent);
+        cursor: pointer;
+        font-size: 0.92rem;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      BÀI LÀM — thêm Bootstrap 5 CDN + Card / form-control / btn theo docs.
+      Đề: README.md · Docs: https://getbootstrap.com/docs/5.3/
+      Reset: cp before.html index.html
+      Clarify:
+      1.
+      2.
+      3.
+      Note class từ docs:
+      -
+      -
+      -
+    -->
+    <div class="banner">
+      <strong>index.html</strong> — bài làm. Gắn Bootstrap 5, thay box homemade bằng
+      <code>card</code> + <code>form-control</code> + <code>btn</code>. So với
+      <code>before.html</code> sau khi xong.
+    </div>
+
+    <div class="page">
+      <div class="box">
+        <div class="heading">Đăng nhập ITFS</div>
+        <div class="sub">Portal nội bộ · dùng tài khoản công ty</div>
+        <form action="#" method="get" onsubmit="return false;">
+          <div class="field">
+            <div class="lbl">Email</div>
+            <input class="inp" type="email" placeholder="you@company.com" />
+          </div>
+          <div class="field">
+            <div class="lbl">Mật khẩu</div>
+            <input class="inp" type="password" placeholder="••••••••" />
+          </div>
+          <div class="actions">
+            <div class="primary" onclick="alert('login')">Đăng nhập</div>
+            <div class="sso" onclick="alert('sso')">Đăng nhập SSO</div>
+            <div class="forgot" onclick="location.hash='forgot'">Quên mật khẩu?</div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

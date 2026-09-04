@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>J1-01 · Profile (div soup — hãy sửa)</title>
+    <style>
+      :root {
+        --bg: #f6f4ef;
+        --surface: #fffdf8;
+        --ink: #1c1917;
+        --muted: #57534e;
+        --line: #e7e5e4;
+        --accent: #0f766e;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        color: var(--ink);
+        background: var(--bg);
+        line-height: 1.55;
+      }
+
+      .wrap {
+        max-width: 52rem;
+        margin: 0 auto;
+        padding: 1.25rem;
+      }
+
+      .banner {
+        font-size: 0.9rem;
+        color: #9a3412;
+        background: #ffedd5;
+        border: 1px solid #fed7aa;
+        border-radius: 8px;
+        padding: 0.75rem 0.9rem;
+        margin-bottom: 1rem;
+      }
+
+      .page .top {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem 1rem;
+        padding-bottom: 0.85rem;
+        border-bottom: 1px solid var(--line);
+        margin-bottom: 1.1rem;
+      }
+
+      .logo {
+        font-weight: 700;
+      }
+
+      .menu {
+        color: var(--muted);
+        cursor: pointer;
+        font-weight: 560;
+      }
+
+      .content {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .hero {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.1rem;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+
+      .avatar {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: var(--line);
+      }
+
+      .title {
+        font-size: 1.45rem;
+        font-weight: 700;
+      }
+
+      .role {
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .btn {
+        margin-left: auto;
+        background: var(--ink);
+        color: #fff;
+        border-radius: 8px;
+        padding: 0.45rem 0.85rem;
+        cursor: pointer;
+      }
+
+      .block,
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 1rem 1.1rem;
+      }
+
+      .block .label,
+      .cards .label {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+
+      .cards {
+        display: grid;
+        gap: 0.65rem;
+      }
+
+      .card {
+        border-radius: 10px;
+      }
+
+      .bottom {
+        margin-top: 1.5rem;
+        padding-top: 0.85rem;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.9rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem 1.25rem;
+        justify-content: space-between;
+      }
+
+      .bottom .menu {
+        display: inline;
+        margin-right: 0.85rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      BÀI LÀM — sửa markup tại file này (index.html).
+      Đề bài: ./README.md
+      TODO: thay toàn bộ div soup bằng landmark semantic.
+      Clarify (điền trước khi sửa):
+      1.
+      2.
+      3.
+      4.
+    -->
+
+    <div class="wrap">
+      <div class="banner">
+        Đây là <strong>bài làm (div soup)</strong>. Hãy sửa markup trong
+        <code>index.html</code> — xem đề tại <code>README.md</code>.
+      </div>
+
+      <!-- TODO: thay cấu trúc bên dưới bằng header / nav / main / section / article / footer -->
+      <div class="page">
+        <div class="top">
+          <div class="logo">ITFS Portal</div>
+          <!-- TODO: điều hướng phải là <a href>, bọc trong <nav> -->
+          <div class="menu" onclick="location.hash='home'">Trang chủ</div>
+          <div class="menu" onclick="location.hash='profile'">Profile</div>
+          <div class="menu" onclick="location.hash='team'">Team</div>
+        </div>
+
+        <div class="content">
+          <div class="hero">
+            <!-- TODO: thêm alt mang nghĩa -->
+            <img
+              class="avatar"
+              src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Crect fill='%230f766e' width='72' height='72'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' fill='white' font-size='28' font-family='sans-serif'%3EMA%3C/text%3E%3C/svg%3E"
+              width="72"
+              height="72"
+            />
+            <div>
+              <!-- TODO: đây phải là h1, không phải div.title -->
+              <div class="title">Minh Anh</div>
+              <div class="role">Frontend Intern · Line Alpha</div>
+            </div>
+            <!-- TODO: hành động → <button type="button">, không phải div.btn -->
+            <div class="btn" onclick="alert('edit')">Chỉnh sửa</div>
+          </div>
+
+          <div class="block">
+            <div class="label">Giới thiệu</div>
+            <div>
+              Đang học UI Foundations (J1): ưu tiên HTML semantic trước khi tối ưu
+              style. Thích biến mockup mơ hồ thành câu hỏi clarify trước khi code.
+            </div>
+          </div>
+
+          <div class="cards">
+            <div class="label">Dự án gần đây</div>
+            <!-- TODO: mỗi project → article (hoặc li trong list) trong section -->
+            <div class="card">
+              <div class="title" style="font-size: 1rem">Portal changelog</div>
+              <div class="role">
+                Trang tĩnh liệt kê thay đổi nội bộ — luyện landmark và heading.
+              </div>
+            </div>
+            <div class="card">
+              <div class="title" style="font-size: 1rem">Profile card</div>
+              <div class="role">Card hồ sơ dùng đúng a vs button.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bottom">
+          <div>© 2026 ITFS Learning · Tài liệu nội bộ</div>
+          <div>
+            <div class="menu" onclick="location.hash='help'">Trợ giúp</div>
+            <div class="menu" onclick="location.hash='policy'">Nội quy</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

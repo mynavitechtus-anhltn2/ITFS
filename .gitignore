@@ -30,3 +30,6 @@ build/
 # Personal files
 99_Others/
 */README.md
+*/*/README.md
+00_planning.md
+**/solution.*
