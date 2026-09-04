@@ -1,0 +1,32 @@
+# OS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.coverage
+
+# Node
+node_modules/
+dist/
+build/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# Editor
+.vscode/*
+!.vscode/launch.json
+.idea/
+
+# Personal files
+99_Others/
+*/README.md
