@@ -13,6 +13,8 @@ venv/
 node_modules/
 dist/
 build/
+.docusaurus/
+.cache-loader/
 
 # Env / secrets
 .env
@@ -28,8 +30,6 @@ build/
 .idea/
 
 # Personal files
+11_interview
 99_Others/
-*/README.md
-*/01_Knowledge_Base/README.md
 00_planning.md
-**/solution.*

@@ -1,0 +1,33 @@
+---
+title: Bộ đếm (HTML static)
+sidebar_position: 1
+---
+
+import CodeBlock from "@theme/CodeBlock";
+import counterSource from "!!raw-loader!@site/static/embed/sample-demo/counter.js";
+
+# Bộ đếm (HTML static)
+
+## Chạy thử
+
+<HtmlEmbed
+  src="/embed/sample-demo/index.html"
+  title="Sample demo: bộ đếm"
+  height={260}
+/>
+
+Hoặc [mở demo trong tab mới](pathname:///embed/sample-demo/index.html).
+
+## Source
+
+<CodeBlock
+  language="js"
+  title="static/embed/sample-demo/counter.js"
+  showLineNumbers
+>
+  {counterSource}
+</CodeBlock>
+
+## Chạy local
+
+Demo này là HTML thuần, chỉ cần mở `static/embed/sample-demo/index.html` bằng trình duyệt.
