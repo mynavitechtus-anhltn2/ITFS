@@ -1,0 +1,21 @@
+.badge {
+  display: inline-block;
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #fff;
+  vertical-align: middle;
+}
+
+.J {
+  background: var(--ifm-color-success-dark);
+}
+
+.M {
+  background: var(--ifm-color-warning-darker);
+}
+
+.S {
+  background: var(--ifm-color-danger-dark);
+}

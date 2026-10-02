@@ -1,0 +1,10 @@
+{
+  "label": "Sample Pillar",
+  "position": 1,
+  "collapsed": false,
+  "link": {
+    "type": "generated-index",
+    "slug": "/knowledge-hub/sample-pillar",
+    "description": "Template cho một pillar: theory và exercises."
+  }
+}
